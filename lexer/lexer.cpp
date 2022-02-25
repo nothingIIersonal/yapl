@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 		std::make_pair(VAR_regex, VAR)
 	};
 
-	std::vector< std::shared_ptr<Token> > tokens;
+	std::vector< std::unique_ptr<Token> > tokens;
 
 	char *__accumulator = (char *)calloc(ACCUMULATOR_SIZE, sizeof( char ));
 	char temp_ch = 0;
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 
 				__accumulator[i] = 0;
 
-				tokens.push_back( std::make_shared<Token> 
+				tokens.push_back( std::make_unique<Token> 
 					(_current_type, static_cast<std::string>(__accumulator))
 				);
 
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
 
 		std::cout << "<-------- " << __cycle__number++ << " CYCLE -------->\n";
 	}
-	tokens.push_back( std::make_shared<Token>
+	tokens.push_back( std::make_unique<Token>
 		(_EOF, static_cast<std::string>(_EOF))
 	);
 
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "\n\nTOKENS:\n"
 					"|----------------------------------------------------------|\n";
-	for (auto token : tokens)
+	for (auto &token : tokens)
 	{
 		std::cout << "\t";
 		std::cout << std::left << std::setw(30) << "< '" + token->get_type() + "' >";
