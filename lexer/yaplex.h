@@ -185,7 +185,7 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 	char temp_ch = 0;
 
 	bool __success = false, __wait_success = true;
-	size_t __pos = 0, __cycle__number = 0, __line = 1;
+	size_t __pos = 0, __line = 1;
 	std::string __current_type = { 0 };
 
 	while ( __source__file.get(temp_ch) )
@@ -193,7 +193,10 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 		if ( __pos >= 254 )
 		{
 			std::cout << "<< ACCUMULATOR OVEFRLOW DETECTED >>\n";
+
 			free(__accumulator);
+			__source__file.close();
+
 			return 1;
 		}
 
@@ -215,6 +218,8 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 			std::cout << std::right << std::setw(11) << '^' << "\n";
 
 			free(__accumulator);
+			__source__file.close();
+
 			return 1;
 		}
 
@@ -253,6 +258,8 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 				std::cout << std::right << std::setw(11) << '^' << "\n";
 
 				free(__accumulator);
+				__source__file.close();
+
 				return 1;
 			}
 			__source__file.unget();
@@ -289,8 +296,8 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 		(_EOF, static_cast<std::string>(_EOF))
 	);
 
-	__source__file.close();
 	free(__accumulator);
+	__source__file.close();
 
 	return 0;
 }
