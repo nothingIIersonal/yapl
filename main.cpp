@@ -21,8 +21,6 @@ int main(int argc, char* argv[])
 	float __end_tokenize = clock();
 	float __tokenize_time = 1000 * (__end_tokenize - __start_tokenize) / CLOCKS_PER_SEC;
 
-	std::cout << "RUNTIME: " << 1000 * (__end_tokenize - __start_tokenize) / CLOCKS_PER_SEC << " ms." << std::endl;
-
 	std::cout << "|----------------------------------------------------------|\n";
 	std::cout << std::right << std::setw(15) << "TOKENS:\n";
 	std::cout << "|----------------------------------------------------------|\n\n";
