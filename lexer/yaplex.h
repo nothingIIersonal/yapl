@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
-
+#include <cinttypes>
 
 
 #define ACCUMULATOR_SIZE 256
@@ -30,6 +30,7 @@
 #define RIGHT_BRACE "RIGHT_BRACE" // }
 #define LEFT_SQUARE_BRACKETS "LEFT_SQUARE_BRACKETS" // [
 #define RIGHT_SQUARE_BRACKETS "RIGHT_SQUARE_BRACKETS" // ]
+#define COMMENT "COMMENT" // //
 
 #define ASSIGN_OP "ASSIGN_OP" // =
 #define ADD_OP "ADD_OP" // +
@@ -39,6 +40,11 @@
 #define POW_OP "POW_OP" // **
 #define INC_OP "INC_OP" // ++
 #define DEC_OP "DEC_OP" // --
+#define ADD_ASSIGN_OP "ADD_ASSIGN_OP" // +=
+#define SUB_ASSIGN_OP "SUB_ASSIGN_OP" // -=
+#define MUL_ASSIGN_OP "MUL_ASSIGN_OP" // *=
+#define DIV_ASSIGN_OP "DIV_ASSIGN_OP" // /=
+
 #define EQUAL_OP "EQUAL_OP" // ==
 #define GREATER_THAN_OP "GREATER_THAN_OP" // >
 #define LESS_THAN_OP "LESS_THAN_OP" // <
@@ -47,6 +53,8 @@
 
 #define _EOF "EOF" // end of file
 
+
+// #define __DEBUG
 
 
 class Token
@@ -120,6 +128,21 @@ const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& reg
 		{RIGHT_SQUARE_BRACKETS, std::shared_ptr<std::regex>(
 			new std::regex("\\]"))},
 
+		{COMMENT, std::shared_ptr<std::regex>(
+			new std::regex("(\\/\\/)[^\n]*$"))},
+
+		{ADD_ASSIGN_OP, std::shared_ptr<std::regex>(
+			new std::regex("\\+\\="))},
+
+		{SUB_ASSIGN_OP, std::shared_ptr<std::regex>(
+			new std::regex("\\-\\="))},
+
+		{MUL_ASSIGN_OP, std::shared_ptr<std::regex>(
+			new std::regex("\\*\\="))},
+
+		{DIV_ASSIGN_OP, std::shared_ptr<std::regex>(
+			new std::regex("\\/\\="))},
+
 		{ADD_OP, std::shared_ptr<std::regex>(
 			new std::regex("\\+"))},
 
@@ -161,7 +184,7 @@ const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& reg
 	};
 }
 
-ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token> >& tokens)
+int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> >& tokens)
 {
 	if ( filepath.empty() )
 	{
@@ -188,6 +211,10 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 	size_t __pos = 0, __line = 1;
 	std::string __current_type = { 0 };
 
+	#ifdef __DEBUG
+		size_t __cycle_number = 0;
+	#endif
+
 	while ( __source__file.get(temp_ch) )
 	{
 		if ( __pos >= 254 )
@@ -199,6 +226,10 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 
 			return 1;
 		}
+
+		#ifdef __DEBUG
+			print_array(__accumulator); std::cout << "|\n";
+		#endif
 
 		if ( __accumulator[0] == 0 && (temp_ch == ' ' || temp_ch == '\t') )
 		{
@@ -272,8 +303,8 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 			__accumulator[__pos - 1] = 0;
 			__source__file.unget();
 
-			tokens.push_back( std::make_unique<Token> 
-				( __current_type, static_cast<std::string>(__accumulator) )
+			tokens.push_back( std::move(std::make_unique<Token> 
+				( __current_type, static_cast<std::string>(__accumulator) ))
 			);
 
 			clear_array(__accumulator, __pos);
@@ -282,18 +313,22 @@ ssize_t tokenize(const std::string& filepath, std::vector< std::unique_ptr<Token
 			__wait_success = true;
 			__current_type = { 0 };
 			__pos = 0;
+
+			#ifdef __DEBUG
+				std::cout << "|------------------------" << __cycle_number++ << " CYCLE------------------------|\n";
+			#endif
 		}
 	}
 
 	if ( __source__file.eof() && __current_type[0] != 0 )
 	{
-		tokens.push_back( std::make_unique<Token> 
-			( __current_type, static_cast<std::string>(__accumulator) )
+		tokens.push_back( std::move(std::make_unique<Token> 
+			( __current_type, static_cast<std::string>(__accumulator) ))
 		);
 	}
 
-	tokens.push_back( std::make_unique<Token>
-		(_EOF, static_cast<std::string>(_EOF))
+	tokens.push_back( std::move(std::make_unique<Token>
+		( _EOF, static_cast<std::string>(_EOF) ))
 	);
 
 	free(__accumulator);

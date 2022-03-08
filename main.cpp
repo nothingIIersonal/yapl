@@ -1,4 +1,5 @@
 #include <iostream>
+#include <deque>
 #include "lexer/yaplex.h"
 
 #include <ctime>
@@ -11,7 +12,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::vector< std::unique_ptr<Token> > tokens;
+	std::deque< std::unique_ptr<Token> > tokens;
 
 	float __start_tokenize = clock();
 	if (tokenize(static_cast<std::string>(argv[1]), tokens))

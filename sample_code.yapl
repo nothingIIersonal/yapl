@@ -6,6 +6,9 @@ print(var_a, var_b, var_c);
 
 var_d = input(int, "var_d>> "); 	
 
+// THIS IS COMMENT...		
+	
+
 if (var_d > 0)
 {
 	print("Positive"); 	 	 	  
@@ -23,6 +26,12 @@ for (i++	     			50) { print(i); }
 for (k 49) { }
 
 j = 50;
+j += 1;
+j -= 2;
+j /= 3;
+j *= 4;
+
+
 while (j)
 {
 	print(j);
@@ -33,4 +42,4 @@ fas
 afsa
 12fsa
 4
-fas2
+fas2"STRING \\\"YAAAAAAAAAA!!"
