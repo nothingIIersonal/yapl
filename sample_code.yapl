@@ -1,45 +1,122 @@
-var_a = 555;
-var_b = 2 * (var_a / 5 + 6*7) - 2**5;		
-var_c = "hello, 	wo\\r\\\"l\\\d\\\\";
-  
-print(var_a, var_b, var_c);   
+$_entry(start)
+$_exit(end)
 
-var_d = input(int, "var_d>> "); 	
-
-// THIS IS COMMENT...		
-	
-
-if (var_d > 0)
+fun end()
 {
-	print("Positive"); 	 	 	  
-}
-elif (var_d == 0)
-{
-	print("NULL");
-}
-else
-{
-	print("Negative");
+	print("exit function successfully called\n\n");
 }
 
-for (i++	     			50) { print(i); }
-for (k 49) { }
-
-j = 50;
-j += 1;
-j -= 2;
-j /= 3;
-j *= 4;
-
-
-while (j)
+fun get_num(value_1, value_2, value_3)
 {
-	print(j);
-	j--;
-}aaaabbbb
+	return value_1 * value_2 * value_3 + 1;
+}
 
-fas
-afsa
-12fsa
-4
-fas2"STRING \\\"YAAAAAAAAAA!!"
+fun get_value(value, degree)
+{
+	ret = get_num(value, degree, get_num(1, 2, 3));
+
+	while (degree)
+	{
+		ret += value - (value + 1) ** degree;
+
+		degree = degree - 1;
+	}
+
+	return ret;
+}
+
+fun start()
+{
+	var_a = 5;
+	var_b = 2 * (var_a / 5 		+ 6*(7 - 23**var_a)) - 2**5;		
+	var_c = "hello, 	wo\\r\\\"l\\\n\\\\";
+	var_e = (((5+3)))*var_b+  12*(5+2)**2;
+	  
+	print(var_a, var_b, var_c, var_e);   
+
+	input(var_d, "var_d>> "); 	
+
+	// THIS IS COMMENT...		
+		
+
+	if (var_d > 0)
+	{
+		print("Positive"); 	 	 	  
+	}
+	elif (var_d == 0)
+	{
+		print("NULL");
+	}
+	else
+	{
+		print("Negative");
+	}
+
+	for (i = 0; i < 10; i++)
+	{
+		print(i);
+	}
+
+	counter = 5;
+	while (counter--)
+	{
+		print(counter);
+	}
+
+	j = 50;
+	j += 1;
+	j -= 2;
+	j /= 3;
+	j *= 4;
+
+
+	while (j)
+	{
+		print(j);
+		j--;
+	}
+
+	check = true;
+	cnt = 0;
+	do
+	{
+		print("dO_While_CYCLE");
+		if (cnt == 8)
+		{
+			break;
+		}
+	} while (cnt++ <= 10);
+
+	float_number_1 = 123.123;
+	float_number_2 = 0.123123;
+	float_number_3 = 000.000;
+	float_number_4 = .123;
+	float_number_5 = 123.;
+
+	// struct_1.method();
+
+	bits_1 = 5;
+	bits_2 = 6;
+
+	bits_1 << 2;
+	bits_2 >> 3;
+
+	bits_1 = bits_2 & 4;
+	bits_2 = bits_1 | 7;
+
+	cond_1 = true;
+	cond_2 = false;
+	if (cond_1 && cond_2)
+	{
+		print("YEAH");
+	}
+	elif (cond_1 || cond_2)
+	{
+		print("NONE");
+	}
+
+	char_1 = 'f';
+	char_2 = '\0';
+	char_3 = '\n';
+	char_4 = '2';
+}

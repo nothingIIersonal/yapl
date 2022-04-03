@@ -8,51 +8,9 @@
 #include <iomanip>
 #include <cinttypes>
 
+#include "../terminals.h"
 
 #define ACCUMULATOR_SIZE 256
-
-#define VAR "VAR" // var_n
-#define DIGIT "DIGIT" // 123
-#define STRING "STRING" // "_#$12$!@%()*^#+_..as\"fnoi13pofasofQ..//\\"
-
-#define IF "IF" // if
-#define ELIF "ELIF" // elif
-#define FOR "FOR" // for
-#define WHILE "WHILE" // while
-
-#define SEMICOLON "SEMICOLON" // ;
-#define COLON "COLON" // :
-#define APOSTROPHE "APOSTROPHE" // '
-#define COMMA "COMMA" // ,
-#define LEFT_BRACKET "LEFT_BRACKET" // (
-#define RIGHT_BRACKET "RIGHT_BRACKET" // )
-#define LEFT_BRACE "LEFT_BRACE" // {
-#define RIGHT_BRACE "RIGHT_BRACE" // }
-#define LEFT_SQUARE_BRACKETS "LEFT_SQUARE_BRACKETS" // [
-#define RIGHT_SQUARE_BRACKETS "RIGHT_SQUARE_BRACKETS" // ]
-#define COMMENT "COMMENT" // //
-
-#define ASSIGN_OP "ASSIGN_OP" // =
-#define ADD_OP "ADD_OP" // +
-#define SUB_OP "SUB_OP" // -
-#define MUL_OP "MUL_OP" // *
-#define DIV_OP "DIV_OP" // /
-#define POW_OP "POW_OP" // **
-#define INC_OP "INC_OP" // ++
-#define DEC_OP "DEC_OP" // --
-#define ADD_ASSIGN_OP "ADD_ASSIGN_OP" // +=
-#define SUB_ASSIGN_OP "SUB_ASSIGN_OP" // -=
-#define MUL_ASSIGN_OP "MUL_ASSIGN_OP" // *=
-#define DIV_ASSIGN_OP "DIV_ASSIGN_OP" // /=
-
-#define EQUAL_OP "EQUAL_OP" // ==
-#define GREATER_THAN_OP "GREATER_THAN_OP" // >
-#define LESS_THAN_OP "LESS_THAN_OP" // <
-#define GREATER_OR_EQUAL_OP "GREATER_OR_EQUAL_OP" // >=
-#define LESS_OR_EQUAL_OP "LESS_OR_EQUAL_OP" // <=
-
-#define _EOF "EOF" // end of file
-
 
 // #define __DEBUG
 
@@ -62,26 +20,57 @@ class Token
 private:
 	const std::string _type;
 	const std::string _value;
+	const size_t _line;
+	const size_t _pos;
 
 public:
-	Token(const std::string& type, const std::string& value) : _type(type), _value(value) {}
+	Token(const std::string& type, const std::string& value, const size_t line, const size_t pos) : _type(type), _value(value), _line(line), _pos(pos) {}
 
 	std::string get_type() { return this->_type; }
 	std::string get_value() { return this->_value; }
+	size_t get_line() { return this->_line; }
+	size_t get_pos() { return this->_pos; }
 };
 
 const inline void clear_array(char *p, size_t size) { memset(p, 0, size); }
 const inline void print_array(const char *p) { std::cout << p; }
 
-const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& regexps)
+const void get_regexps(std::vector< std::pair<std::string, std::shared_ptr<std::regex>> >& regexps)
 {
 	regexps =
 	{
+		{ENTRY, std::shared_ptr<std::regex>(
+			new std::regex("\\$_entry"))},
+
+		{EXIT, std::shared_ptr<std::regex>(
+			new std::regex("\\$_exit"))},
+
 		{STRING, std::shared_ptr<std::regex>(
 			new std::regex("\"((\\\\.)|[^.\\\\])*\""))},
 
-		{DIGIT, std::shared_ptr<std::regex>(
-			new std::regex("0|([1-9][0-9]*)"))},
+		{CHAR, std::shared_ptr<std::regex>(
+			new std::regex("\'((\\\\.)|[^.\\\\])\'"))},
+
+		{LINKED_LIST, std::shared_ptr<std::regex>(
+			new std::regex("linked_list"))},
+
+		{HASH_SET, std::shared_ptr<std::regex>(
+			new std::regex("hash_set"))},
+
+		{PRINT, std::shared_ptr<std::regex>(
+			new std::regex("print"))},
+
+		{INPUT, std::shared_ptr<std::regex>(
+			new std::regex("input"))},
+
+		{FLOAT, std::shared_ptr<std::regex>(
+			new std::regex("([0-9]+\\.[0-9]*)|(\\.[0-9]+)"))},
+
+		{INTEGER, std::shared_ptr<std::regex>(
+			new std::regex("([0-9]*)|([0-9]*)"))},
+
+		{BOOLEAN, std::shared_ptr<std::regex>(
+			new std::regex("true|false"))},
 
 		{ASSIGN_OP, std::shared_ptr<std::regex>(
 			new std::regex("="))},
@@ -92,11 +81,26 @@ const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& reg
 		{ELIF, std::shared_ptr<std::regex>(
 			new std::regex("elif"))},
 
+		{ELSE, std::shared_ptr<std::regex>(
+			new std::regex("else"))},
+
 		{FOR, std::shared_ptr<std::regex>(
 			new std::regex("for"))},
 
 		{WHILE, std::shared_ptr<std::regex>(
 			new std::regex("while"))},
+
+		{DO, std::shared_ptr<std::regex>(
+			new std::regex("do"))},
+
+		{BREAK, std::shared_ptr<std::regex>(
+			new std::regex("break"))},
+
+		{RETURN, std::shared_ptr<std::regex>(
+			new std::regex("return"))},
+
+		{FUN, std::shared_ptr<std::regex>(
+			new std::regex("fun"))},
 
 		{SEMICOLON, std::shared_ptr<std::regex>(
 			new std::regex(";"))},
@@ -104,8 +108,8 @@ const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& reg
 		{COLON, std::shared_ptr<std::regex>(
 			new std::regex(":"))},
 
-		{APOSTROPHE, std::shared_ptr<std::regex>(
-			new std::regex("\\'"))},
+		{DOT, std::shared_ptr<std::regex>(
+			new std::regex("\\."))},
 
 		{COMMA, std::shared_ptr<std::regex>(
 			new std::regex("\\,"))},
@@ -131,60 +135,33 @@ const void get_regexps(std::map< std::string, std::shared_ptr<std::regex> >& reg
 		{COMMENT, std::shared_ptr<std::regex>(
 			new std::regex("(\\/\\/)[^\n]*$"))},
 
-		{ADD_ASSIGN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\+\\="))},
+		{ARITHM_ASSIGN_OP, std::shared_ptr<std::regex>(
+			new std::regex("(\\+\\=)|(\\-\\=)|(\\*\\=)|(\\/\\=)"))},
 
-		{SUB_ASSIGN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\-\\="))},
+		{ARITHM_OP_PREF, std::shared_ptr<std::regex>(
+			new std::regex("[\\+]|[\\-]"))},
 
-		{MUL_ASSIGN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\*\\="))},
+		{ARITHM_OP_UNARY, std::shared_ptr<std::regex>(
+			new std::regex("(\\+\\+)|(\\-\\-)"))},
 
-		{DIV_ASSIGN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\/\\="))},
+		{ARITHM_OP_BINARY, std::shared_ptr<std::regex>(
+			new std::regex("[\\*]|[\\/]|(\\*\\*)|(\\%)"))},
 
-		{ADD_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\+"))},
+		{BIT_OP, std::shared_ptr<std::regex>(
+			new std::regex("(\\&)|(\\|)|(\\^)|(\\<\\<)|(\\>\\>)"))},
 
-		{SUB_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\-"))},
+		{LOGIC_OP, std::shared_ptr<std::regex>(
+			new std::regex("(\\&\\&)|(\\|\\|)"))},
 
-		{MUL_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\*"))},
-
-		{DIV_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\/"))},
-
-		{POW_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\*\\*"))},
-
-		{INC_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\+\\+"))},
-
-		{DEC_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\-\\-"))},
-
-		{EQUAL_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\=\\="))},
-
-		{GREATER_THAN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\>"))},
-
-		{LESS_THAN_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\<"))},
-
-		{GREATER_OR_EQUAL_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\>\\="))},
-
-		{LESS_OR_EQUAL_OP, std::shared_ptr<std::regex>(
-			new std::regex("\\<\\="))},
+		{CMP_OP, std::shared_ptr<std::regex>(
+			new std::regex("(\\=\\=)|(\\>)|(\\<)|(\\>\\=)|(\\<\\=)"))},
 
 		{VAR, std::shared_ptr<std::regex>(
 			new std::regex("[a-zA-Z_][a-zA-Z_0-9]*"))}
 	};
 }
 
-int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> >& tokens)
+int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token> >& tokens)
 {
 	if ( filepath.empty() )
 	{
@@ -200,7 +177,7 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 	}
 
 	std::cmatch __matches;
-	std::map< std::string, std::shared_ptr<std::regex> > regexps;
+	std::vector< std::pair<std::string, std::shared_ptr<std::regex>> > regexps;
 
 	get_regexps(regexps);
 
@@ -208,7 +185,7 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 	char temp_ch = 0;
 
 	bool __success = false, __wait_success = true;
-	size_t __pos = 0, __line = 1;
+	size_t __pos = 0, __abs_pos = 1, __line = 1;
 	std::string __current_type = { 0 };
 
 	#ifdef __DEBUG
@@ -227,6 +204,15 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 			return 1;
 		}
 
+		if ( temp_ch == '\t' )
+		{
+			__abs_pos += 4;
+		}
+		else
+		{
+			__abs_pos++;
+		}
+
 		#ifdef __DEBUG
 			print_array(__accumulator); std::cout << "|\n";
 		#endif
@@ -237,6 +223,7 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 		}
 		else if ( __accumulator[0] == 0 && temp_ch == '\n' )
 		{
+			__abs_pos = 1;
 			__line++;
 			continue;
 		}
@@ -256,11 +243,11 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 
 		__accumulator[__pos++] = temp_ch;
 
-		for (const auto& [REGEXP_STR, REGEXP] : regexps)
+		for (const auto& regex : regexps)
 		{
-			if ( std::regex_match(__accumulator, __matches, *REGEXP) )
+			if ( std::regex_match(__accumulator, __matches, *regex.second) )
 			{
-				__current_type = REGEXP_STR;
+				__current_type = regex.first;
 				__success = true;
 
 				break;
@@ -302,9 +289,14 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 		{
 			__accumulator[__pos - 1] = 0;
 			__source__file.unget();
+			
+			if ( __abs_pos )
+			{
+				__abs_pos--;
+			}
 
-			tokens.push_back( std::move(std::make_unique<Token> 
-				( __current_type, static_cast<std::string>(__accumulator) ))
+			tokens.push_back( std::move(std::make_shared<Token> 
+				( __current_type, static_cast<std::string>(__accumulator), __line, __abs_pos ))
 			);
 
 			clear_array(__accumulator, __pos);
@@ -322,13 +314,13 @@ int8_t tokenize(const std::string& filepath, std::deque< std::unique_ptr<Token> 
 
 	if ( __source__file.eof() && __current_type[0] != 0 )
 	{
-		tokens.push_back( std::move(std::make_unique<Token> 
-			( __current_type, static_cast<std::string>(__accumulator) ))
+		tokens.push_back( std::move(std::make_shared<Token> 
+			( __current_type, static_cast<std::string>(__accumulator), __line, __abs_pos ))
 		);
 	}
 
-	tokens.push_back( std::move(std::make_unique<Token>
-		( _EOF, static_cast<std::string>(_EOF) ))
+	tokens.push_back( std::move(std::make_shared<Token>
+		( _EOF, static_cast<std::string>(_EOF), __line, __abs_pos ))
 	);
 
 	free(__accumulator);
