@@ -165,7 +165,7 @@ int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token>
 {
 	if ( filepath.empty() )
 	{
-		std::cout << "<< Usage: yaplex [source] >>\n";
+		std::cout << "<< Usage: yapl [source] >>\n";
 		return 1;
 	}
 
