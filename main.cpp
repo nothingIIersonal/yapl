@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
 	if ( argv[1] == 0 )
 	{
-		std::cout << "<< Usage: yaplex [source] >>\n";
+		std::cout << "<< Usage: yapl [source] >>\n";
 		return 1;
 	}
 
