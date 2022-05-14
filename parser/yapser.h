@@ -724,12 +724,12 @@ std::vector<__rpn_node> Parser::get_rpn(std::string pack_name = "")   // { ... }
 		}
 
 
-		if (   token_it->__NON_TERMINAL == "pack_field_call" || token_it->__NON_TERMINAL == "pack_field_call_(BREAK)"
-			|| token_it->__NON_TERMINAL == "pack_call" || token_it->__NON_TERMINAL == "pack_method_call"
-			|| token_it->__NON_TERMINAL == "pack_method_call_(BREAK)" || token_it->__NON_TERMINAL == "pack_field_call_first")
-		{
+		// if (   token_it->__NON_TERMINAL == "pack_field_call" || token_it->__NON_TERMINAL == "pack_field_call_(BREAK)"
+		// 	|| token_it->__NON_TERMINAL == "pack_call" || token_it->__NON_TERMINAL == "pack_method_call"
+		// 	|| token_it->__NON_TERMINAL == "pack_method_call_(BREAK)" || token_it->__NON_TERMINAL == "pack_field_call_first")
+		// {
 	
-		}
+		// }
 
 
 		if ((   token_it->__NON_TERMINAL == "func_call"
