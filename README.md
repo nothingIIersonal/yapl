@@ -1,4 +1,4 @@
 # yapl
 Yet Another Programming Language
 
-Usage: yapl [source]
+Usage: yapl [source].yapl
