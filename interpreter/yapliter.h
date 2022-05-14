@@ -324,12 +324,12 @@ void perform_func(std::string func)
 
 		if (!is_float)
 		{
-			std::cout << "IS INT\n\n";
+			// std::cout << "IS INT\n\n";
 			arg = std::to_string(std::stoi(arg));
 		}
 		else if (is_float)
 		{
-			std::cout << "IS FLOAT\n\n";
+			// std::cout << "IS FLOAT\n\n";
 			arg = std::to_string(std::stof(arg));
 		}
 
