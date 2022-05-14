@@ -15,6 +15,8 @@
 
 #define PRINT "PRINT" // print
 #define INPUT "INPUT" // input
+#define SLEEP "SLEEP" // sleep
+#define STR "STR" 	  // str
 
 #define IF "IF" // if
 #define ELIF "ELIF" // elif
@@ -28,8 +30,8 @@
 #define FUN "FUN" // fun
 
 #define SEMICOLON "SEMICOLON" // ;
-#define COLON "COLON" // :				// NOT USED IN GRAMMAR
-#define DOT "DOT" // . 				// NOT USED IN GRAMMAR
+#define COLON "COLON" // :
+#define DOT "DOT" // .
 #define COMMA "COMMA" // ,
 #define LEFT_BRACKET "LEFT_BRACKET" // (
 #define RIGHT_BRACKET "RIGHT_BRACKET" // )
@@ -41,12 +43,21 @@
 
 #define ASSIGN_OP "ASSIGN_OP" // =
 #define ARITHM_OP_PREF "ARITHM_OP_PREF" // +, -
-#define ARITHM_OP_UNARY "ARITHM_OP_UNARY" // ++, --
+#define ARITHM_OP_UNARY "ARITHM_OP_UNARY" // ++, --, !, ~
 #define ARITHM_OP_BINARY "ARITHM_OP_BINARY" // *, /, **, %
-#define ARITHM_ASSIGN_OP "ARITHM_ASSIGN_OP" // +=, -=, *=, /=
+#define ARITHM_ASSIGN_OP "ARITHM_ASSIGN_OP" // +=, -=, *=, /=, %=, >>=, <<=, |=, ^=, &=
 
 #define BIT_OP "BIT_OP" // &, |, ^, <<, >>
 #define LOGIC_OP "LOGIC_OP" // &&, ||
-#define CMP_OP "CMP_OP" // ==, >, <, >=, <=
+#define CMP_OP "CMP_OP" // ==, >, <, >=, <=, !=
+
+#define PACK "PACK" // pack
+#define FIELDS "FIELDS" // fields
+#define INITIAL "INITIAL" // initial
+
+// Embedded structure's terminals (not recongized)
+/*	
+	add, get, remove, insert, contains
+*/
 
 #define _EOF "EOF" // end of file

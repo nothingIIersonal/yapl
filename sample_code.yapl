@@ -1,6 +1,40 @@
 $_entry(start)
 $_exit(end)
 
+
+// TODO:
+//		- global fun
+//		- funcs for methods, methods for funcs and method ---> f(x.y.z()) or x.y.z(f()) or x.y.z(a.b.c()) 
+//		- post unar
+//
+
+// { [namespace_0]
+// 	{ [namespace_1]
+// 		{ [namespace_2]
+// 			var = b2;
+// 		}
+// 	}
+// }
+
+
+fun ahaha(a, b, c)
+{
+	a = 2;
+	b = 4 * a + 1;
+	c = b + 1;
+
+	{
+		a = 3;
+		a += 1;
+		d = 2 * c;
+	}
+	d = 1;
+
+	var_abc = a + b * (a + 3**2) % 2 - (a + (2 * b));
+}
+
+// var_true_a = 2;
+
 fun end()
 {
 	print("exit function successfully called\n\n");
@@ -13,7 +47,9 @@ fun get_num(value_1, value_2, value_3)
 
 fun get_value(value, degree)
 {
-	ret = get_num(value, degree, get_num(1, 2, 3));
+	ret = get_num(2 * (3 - value), degree - 1, get_num(1, 2 - 7, 3 * 2 - 1));
+
+	ret = get_num(2 * (3 - value));
 
 	while (degree)
 	{
@@ -25,25 +61,208 @@ fun get_value(value, degree)
 	return ret;
 }
 
+pack pack_1
+{
+	fields : _value_1, _value_2;
+
+	initial(value1, value2)
+	{
+		{
+			{
+				_value_1 = value1;
+				_value_2 = value2;
+			}
+		}
+	}
+
+	fun get_value()
+	{
+		{
+			return _value_1 * _value_2;
+		}
+	}
+};
+
+pack pack_2
+{
+	fields: _pack_1, _value;
+	
+	initial(pack_, value)
+	{
+		_pack_1 = pack_;
+		_value = value;
+	}
+
+	fun get_value()
+	{
+		return _pack_1.get_value();
+	}
+};
+
+fun unar_test()
+{
+	var = --++--++var;
+	var = !var&++var;
+	var <<= 1;
+	var = var << var;
+
+	var_a = +-+-var;
+	var_b = +-var + -(2**2);
+	var_c = +-+2+-(-+-3+-2);
+	var_d = 2 * ( var_a / (5) - 6 );
+
+	var = var + 2;
+}
+
+
+fun emb_fun_test(time)
+{
+	var = 0;
+	input(var, "enter 'var'> ");
+	print("fasfas");
+	print(1,var);
+	sleep(time);
+}
+
+fun if_test()
+{
+	a = 2;
+	b = 1;
+	c = 2;
+	d = 0;
+
+	if (a)
+	{
+		if (b + 2)
+		{
+			return c;
+		}
+		elif (c)
+		{
+			return d;
+		}
+
+		return b;
+	}
+	elif (!d)
+	{
+		if (c)
+		{
+			++c;
+		}
+		else
+		{
+			--c;
+		}
+	}
+	else
+	{
+		return 2;
+	}
+}
+
+fun while_test()
+{
+	a = 1;
+	b = 2;
+	c = 3;
+	d = 4;
+	A = 5;
+	x = 6;
+
+	while (a)
+	{
+		while(b)
+		{
+			c;
+		}
+
+		while(d)
+		{
+			if (A)
+			{
+				while(x)
+				{
+					++x;
+				}
+			}
+		}
+		++a;
+	}
+}
+
 fun start()
 {
 	var_a = 5;
-	var_b = 2 * (var_a / 5 		+ 6*(7 - 23**var_a)) - 2**5;		
+	var_b = 2 * ( (+-var_a) / (+-+-5) 		+ 6*(7 - 23**var_a)) - 2**5 + var_a - true;		
 	var_c = "hello, 	wo\\r\\\"l\\\n\\\\";
 	var_e = (((5+3)))*var_b+  12*(5+2)**2;
-	  
+		
 	print(var_a, var_b, var_c, var_e);   
 
+	var_d = 2;
 	input(var_d, "var_d>> "); 	
 
-	// THIS IS COMMENT...		
+	// // THIS IS COMMENT...		
+
+	var_a = get_value(2, 10);
+
+	p_1 = [.pack_1(5, 2)];
+	p_2 = [.pack_2(p_1, 3)];
+
+	res = x.y.z;
+	res = x.y.z.l.k;
+	res = s.d.s.p_2._pack_1.get_value(1+2**2%2,2-1,3**3123**2);
+	res = s.d.p();
+	res = s.d.p(1+2,2);
+	res = s.d();
+	res = s.d(1,2+2);
+
+	// print(x.y.z.k());
+	// x.y.z(f());
+
+	l_list_1 = [.linked_list(1,2,3)];
+	h_set_1 = [.hash_set(1,2,3)];
+
+	l_list_1.add(2);
+	l_list_1.get(2);
+	l_list_1.remove(0);
+	l_list_1.insert(666, 0);
+
+	h_set_1.add(123);
+	h_set_1.contains(4);
+	h_set_1.remove(123);
+
+	l_list_2 = [.linked_list(2)];
+
+	arr_0 = [];
+	arr = [1+2,2,3];
+	arr_1 = [ahaha(), 21, res];
+	pack_2 = [.pack_1(3)];
+	arr_2 = [1,2,3,4,5,6.999-1, 1000-7];
+
+	// print(p_1.get_value());
+
+	print(a.s.d);
+
+	{
+		var_a = 6;
+		print(var_a);
+
+		{
+			print(var_a);
+		}
 		
+		var_var_a = 2;
+		print(var_var_a);
+	}
+
 
 	if (var_d > 0)
 	{
 		print("Positive"); 	 	 	  
 	}
-	elif (var_d == 0)
+	elif (var_d != 0)
 	{
 		print("NULL");
 	}
@@ -52,13 +271,8 @@ fun start()
 		print("Negative");
 	}
 
-	for (i = 0; i < 10; i++)
-	{
-		print(i);
-	}
-
 	counter = 5;
-	while (counter--)
+	while (--counter)
 	{
 		print(counter);
 	}
@@ -73,19 +287,12 @@ fun start()
 	while (j)
 	{
 		print(j);
-		j--;
+		--j;
 	}
 
 	check = true;
 	cnt = 0;
-	do
-	{
-		print("dO_While_CYCLE");
-		if (cnt == 8)
-		{
-			break;
-		}
-	} while (cnt++ <= 10);
+
 
 	float_number_1 = 123.123;
 	float_number_2 = 0.123123;
@@ -93,7 +300,29 @@ fun start()
 	float_number_4 = .123;
 	float_number_5 = 123.;
 
-	// struct_1.method();
+	struct_1.method();
+
+	l_list_1 = [.linked_list(1,2,3)];
+	h_set_1 = [.hash_set(1,2,3)];
+
+	l_list_1.add(2);
+	l_list_1.get(2);
+	l_list_1.remove(0);
+	l_list_1.insert(666, 0);
+
+	h_set_1.add(123);
+	h_set_1.contains(4);
+	h_set_1.remove(123);
+
+	l_list_2 = [.linked_list(2)];
+
+
+	arr_1 = [ahaha(), 21, var_a];
+	pack_2 = [.pack_1()];
+	arr_2 = [1,2,3,4,5,6.999-1, 1000-7];
+
+
+	arithm_bomb = +-+-+-+-+-+-+66 - (+-+-+-1) - (++--++var_b)++;
 
 	bits_1 = 5;
 	bits_2 = 6;

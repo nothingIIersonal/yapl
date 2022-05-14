@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -10,9 +11,8 @@
 
 #include "../terminals.h"
 
-#define ACCUMULATOR_SIZE 256
 
-// #define __DEBUG
+#define ACCUMULATOR_SIZE 256
 
 
 class Token
@@ -20,16 +20,16 @@ class Token
 private:
 	const std::string _type;
 	const std::string _value;
-	const size_t _line;
-	const size_t _pos;
+	const uint64_t _line;
+	const uint64_t _pos;
 
 public:
-	Token(const std::string& type, const std::string& value, const size_t line, const size_t pos) : _type(type), _value(value), _line(line), _pos(pos) {}
+	Token(const std::string& type, const std::string& value, const uint64_t line, const uint64_t pos) : _type(type), _value(value), _line(line), _pos(pos) {}
 
 	std::string get_type() { return this->_type; }
 	std::string get_value() { return this->_value; }
-	size_t get_line() { return this->_line; }
-	size_t get_pos() { return this->_pos; }
+	uint64_t get_line() { return this->_line; }
+	uint64_t get_pos() { return this->_pos; }
 };
 
 const inline void clear_array(char *p, size_t size) { memset(p, 0, size); }
@@ -62,6 +62,12 @@ const void get_regexps(std::vector< std::pair<std::string, std::shared_ptr<std::
 
 		{INPUT, std::shared_ptr<std::regex>(
 			new std::regex("input"))},
+
+		{SLEEP, std::shared_ptr<std::regex>(
+			new std::regex("sleep"))},
+
+		{STR, std::shared_ptr<std::regex>(
+			new std::regex("str"))},
 
 		{FLOAT, std::shared_ptr<std::regex>(
 			new std::regex("([0-9]+\\.[0-9]*)|(\\.[0-9]+)"))},
@@ -136,13 +142,16 @@ const void get_regexps(std::vector< std::pair<std::string, std::shared_ptr<std::
 			new std::regex("(\\/\\/)[^\n]*$"))},
 
 		{ARITHM_ASSIGN_OP, std::shared_ptr<std::regex>(
-			new std::regex("(\\+\\=)|(\\-\\=)|(\\*\\=)|(\\/\\=)"))},
+			new std::regex( "(\\+\\=)|(\\-\\=)|(\\*\\=)"
+				           "|(\\/\\=)|(\\%\\=)"
+				           "|(\\<\\<\\=)|(\\>\\>\\=)"
+				           "|(\\|\\=)|(\\^\\=)|(\\&\\=)"))},
 
 		{ARITHM_OP_PREF, std::shared_ptr<std::regex>(
 			new std::regex("[\\+]|[\\-]"))},
 
 		{ARITHM_OP_UNARY, std::shared_ptr<std::regex>(
-			new std::regex("(\\+\\+)|(\\-\\-)"))},
+			new std::regex("(\\+\\+)|(\\-\\-)|(\\!)|(\\~)"))},
 
 		{ARITHM_OP_BINARY, std::shared_ptr<std::regex>(
 			new std::regex("[\\*]|[\\/]|(\\*\\*)|(\\%)"))},
@@ -154,7 +163,16 @@ const void get_regexps(std::vector< std::pair<std::string, std::shared_ptr<std::
 			new std::regex("(\\&\\&)|(\\|\\|)"))},
 
 		{CMP_OP, std::shared_ptr<std::regex>(
-			new std::regex("(\\=\\=)|(\\>)|(\\<)|(\\>\\=)|(\\<\\=)"))},
+			new std::regex("(\\=\\=)|(\\>)|(\\<)|(\\>\\=)|(\\<\\=)|(\\!\\=)"))},
+
+		{PACK, std::shared_ptr<std::regex>(
+			new std::regex("pack"))},
+
+		{FIELDS, std::shared_ptr<std::regex>(
+			new std::regex("fields"))},
+
+		{INITIAL, std::shared_ptr<std::regex>(
+			new std::regex("initial"))},
 
 		{VAR, std::shared_ptr<std::regex>(
 			new std::regex("[a-zA-Z_][a-zA-Z_0-9]*"))}
@@ -163,12 +181,6 @@ const void get_regexps(std::vector< std::pair<std::string, std::shared_ptr<std::
 
 int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token> >& tokens)
 {
-	if ( filepath.empty() )
-	{
-		std::cout << "<< Usage: yapl [source] >>\n";
-		return 1;
-	}
-
 	std::ifstream __source__file(filepath);
 	if ( !__source__file.is_open() )
 	{
@@ -185,18 +197,18 @@ int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token>
 	char temp_ch = 0;
 
 	bool __success = false, __wait_success = true;
-	size_t __pos = 0, __abs_pos = 1, __line = 1;
+	uint64_t __pos = 0, __abs_pos = 1, __line = 1;
 	std::string __current_type = { 0 };
 
-	#ifdef __DEBUG
-		size_t __cycle_number = 0;
-	#endif
+#ifdef __DEBUG
+	size_t __cycle_number = 0;
+#endif
 
 	while ( __source__file.get(temp_ch) )
 	{
 		if ( __pos >= 254 )
 		{
-			std::cout << "<< ACCUMULATOR OVEFRLOW DETECTED >>\n";
+			std::cout << "\x1b[31;1m<< ACCUMULATOR OVEFRLOW DETECTED >>\x1b[0m\n";
 
 			free(__accumulator);
 			__source__file.close();
@@ -213,9 +225,9 @@ int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token>
 			__abs_pos++;
 		}
 
-		#ifdef __DEBUG
-			print_array(__accumulator); std::cout << "|\n";
-		#endif
+#ifdef __DEBUG
+		print_array(__accumulator); std::cout << "|\n";
+#endif
 
 		if ( __accumulator[0] == 0 && (temp_ch == ' ' || temp_ch == '\t') )
 		{
@@ -231,9 +243,9 @@ int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token>
 		{
 			__accumulator[__pos - 1] = 0;
 
-			std::cout << filepath << ":" << __line << " error: '" << __accumulator[0] << "' was not declared in this scope\n";
+			std::cout << "\x1b[31;1m" << filepath << ":" << __line << " error: '" << __accumulator[0] << "' was not declared in this scope\n";
 			std::cout << std::left << std::setw(10) << "--------> " << __accumulator << "\n";
-			std::cout << std::right << std::setw(11) << '^' << "\n";
+			std::cout << std::right << std::setw(11) << '^' << "\x1b[0m\n";
 
 			free(__accumulator);
 			__source__file.close();
@@ -306,9 +318,9 @@ int8_t tokenize(const std::string& filepath, std::vector< std::shared_ptr<Token>
 			__current_type = { 0 };
 			__pos = 0;
 
-			#ifdef __DEBUG
-				std::cout << "|------------------------" << __cycle_number++ << " CYCLE------------------------|\n";
-			#endif
+#ifdef __DEBUG
+			std::cout << "|------------------------" << __cycle_number++ << " CYCLE------------------------|\n";
+#endif
 		}
 	}
 
