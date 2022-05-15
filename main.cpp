@@ -1,5 +1,9 @@
 // #define _GLIBCXX_DEBUG
 
+#ifdef __linux__
+	#define USE_COLORS
+#endif
+
 // #define __OUT_TERMINALS
 // #define __DEBUG
 
@@ -81,13 +85,24 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "\n\n";
 		std::cout << "|---------------------------------------------------------------------------------------------------------|\n";
+#ifdef USE_COLORS
 		std::cout << "\x1b[32;40m" << std::setw(40) << "CODE IS CORRECT!" 
 		          << std::setw(20) << "PARSE TIME: " << __parser_time << " ms."
 		          << std::setw(42) << "\x1b[0m\n";
+#else
+		std::cout << std::setw(40) << "CODE IS CORRECT!" 
+		          << std::setw(20) << "PARSE TIME: " << __parser_time << " ms."
+		          << std::setw(42) << "\n";
+#endif
 		std::cout << "|---------------------------------------------------------------------------------------------------------|\n";
 
+#ifdef USE_COLORS
 		std::cout << "\n\n\x1b[32;40m" << std::setw(10) << "Starting program..." << "\x1b[0m";
 		std::cout << "\n\x1b[32;40m" << std::setw(10) << "^^^^^^^^^^^^^^^^^^^" << "\x1b[0m\n\n";
+#else
+		std::cout << "\n\n" << std::setw(10) << "Starting program...";
+		std::cout << "\n" << std::setw(10) << "^^^^^^^^^^^^^^^^^^^" << "\n\n";
+#endif
 		for (const auto &ent: __function_table)
 		{
 			if (ent.__NAME == entry_func_name)
@@ -105,11 +120,19 @@ int main(int argc, char* argv[])
 						break;
 					}
 				}
-
+#ifdef USE_COLORS
 				std::cout << "\n\n\x1b[32;40m"
 				          << "Program executing time (without end() function) -> "
 				          << __execution_time
+					  << " ms."
 				          << "\x1b[0m\n";
+#else
+				std::cout << "\n\n"
+				          << "Program executing time (without end() function) -> "
+				          << __execution_time
+					  << " ms."
+				          << "\n";
+#endif
 
 				break;
 			}
@@ -119,7 +142,11 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "\n\n";
 		std::cout << "|---------------------------------------------------------------------------------------------------------|\n";
+#ifdef USE_COLORS
 		std::cout << std::setw(40) << "\x1b[31;1mFAIL!\x1b[0m\n";
+#else
+		std::cout << std::setw(40) << "FAIL!\n";
+#endif
 		std::cout << "|---------------------------------------------------------------------------------------------------------|\n";
 	}
 
@@ -127,7 +154,15 @@ int main(int argc, char* argv[])
 	std::ofstream out;
 	out.open("tokens_1.txt");
 
-	if ( !out.is_open() ) { std::cout << "\x1b[31;1mError writing lexer terminals...\x1b[0m\n"; return 1; }
+	if ( !out.is_open() ) 
+	{
+#ifdef USE_COLORS
+		std::cout << "\x1b[31;1mError writing lexer terminals...\x1b[0m\n";
+#else
+		std::cout << "Error writing lexer terminals...\n";
+#endif
+		return 1;
+	}
 
 	for (auto i : tokens)
 	{
